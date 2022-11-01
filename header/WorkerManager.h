@@ -35,6 +35,21 @@ public:
 
     // 显示员工
     void show_Emp();
+
+    // 删除员工
+    void del_Emp();
+
+    // 修改职工
+    void update_Emp();
+
+    // 查找
+    void find_Emp();
+
+    // 清空
+    void trunc_Emp();
+
+    // 排序
+    void sort_Emp();
 public:
     int m_EmpNum;
     Worker ** m_EmpArray;

@@ -29,8 +29,11 @@ WorkerManager::WorkerManager() {
     }
     // 文件不为空时
     int num = this->get_Num();
-    cout << "职工个数为:" << num << endl;
     this->m_EmpNum = num;
+    cout << "职工个数为:" << num << endl;
+    this->m_FileIsEmpty = false;
+
+    this->m_EmpArray = new Worker * [this->m_EmpNum];
     this->init_Emp();
 }
 
@@ -195,4 +198,101 @@ void WorkerManager::show_Emp() {
             this->m_EmpArray[i]->showInfo();
         }
     }
+}
+
+// 删除员工
+void WorkerManager::del_Emp() {
+    cout << "所有员工信息:" << endl;
+    this->show_Emp();
+    cout << "请输入要删除的编号" << endl;
+    int id = -1;
+    cin >> id;
+
+    int flag = -100;
+
+    for (int i = 0; i < this->m_EmpNum; i++) {
+        if (this->m_EmpArray[i]->m_Id == id) {
+            flag = i;
+        }
+    }
+    if (flag == -100) {
+        cout << "找不到id=" << id << "的用户";
+    } else {
+        delete this->m_EmpArray[flag];
+        for (int j = flag; j < this->m_EmpNum - 1; j++) {
+            this->m_EmpArray[j] = this->m_EmpArray[j+1];
+        }
+        --this->m_EmpNum;
+        this->save();
+    }
+}
+
+// 更新信息
+void WorkerManager::update_Emp() {
+    cout << "员工信息表：" << endl;
+    this->show_Emp();
+    cout << "请输入要修改的id:";
+    int id = 0;
+    cin >> id;
+
+    string name;
+    int deptId;
+
+    bool flag = false;
+
+
+    for (int i = 0 ; i < m_EmpNum; i++) {
+        if(this->m_EmpArray[i]->m_Id == id) {
+            cout << "原姓名[" << this->m_EmpArray[i]->m_Name << "], 请输入新姓名:";
+            cin >> name;
+            cout << "原部门[" << this->m_EmpArray[i]->m_DeptId << "], 请输入新部门:";
+            cin >> deptId;
+            this->m_EmpArray[i]->m_Name = name;
+            this->m_EmpArray[i]->m_Id = deptId;
+            this->save();
+            flag = true;
+        }
+    }
+    if (!flag) {
+        cout << "数据未找到" << endl;
+    }
+}
+// 查找
+void WorkerManager::find_Emp() {
+    cout << "数据表" << endl;
+    this->show_Emp();
+    int id = 0;
+    cout << "请输入id进行查找: ";
+    cin >> id;
+    for (int i = 0 ; i < m_EmpNum; i++) {
+        if(id == m_EmpArray[i]->m_Id) {
+            this->m_EmpArray[i]->showInfo();
+        }
+    }
+}
+
+// 清空
+void WorkerManager::trunc_Emp() {
+    ofstream ofs;
+    ofs.open(FILENAME, ios::trunc);
+    ofs.close();
+    delete[] this->m_EmpArray;
+    this->m_EmpArray = NULL;
+    this->m_EmpNum = 0;
+}
+
+//
+void WorkerManager::sort_Emp() {
+    for (int i = 0; i < m_EmpNum; i++) {
+        for (int j = 0; j < m_EmpNum - i - 1; j++) {
+            if (m_EmpArray[j]->m_Id > m_EmpArray[j+1]->m_Id) {
+                Worker * temp = NULL;
+                temp = m_EmpArray[j];
+                m_EmpArray[j] = m_EmpArray[j+1];
+                m_EmpArray[j+1] = temp;
+            }
+        }
+    }
+    this->save();
+    this->show_Emp();
 }
